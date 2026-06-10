@@ -1,0 +1,31 @@
+First, I do not think I did the assignment the way I was supposed to. 
+After each query, I would erase and do a new query.
+After going back to read how to turn in the assignment I realized my error.
+I do have individual screenshots of each query though. 
+So more of a mishap than a total wash. 
+
+Also I was taking notes by paper, when the directions said to take notes that is just where my mind went. 
+When you seee my notes, maybe you'll understand why it's easier (&better for me).
+I use a lot of colors to categorize my thoughts (I am not super open about my own mental health journey, but this is part of it in a way).
+But I am now thinking you wanted notes throughout the queries.
+
+My mind has been boggled and flipped every where which way from the first round of assignments this module, 
+which is why I think I got a little lost in the directions. 
+
+I think I learned that I need to slow down and fully understand directions for future assignments. 
+
+To be frank, I didnt actually know I was going to do the assignment, 
+I thought I'd just take a look to see how difficult it would be.
+But I got wrapped up in it. 
+It was a lot of fun and I love mysteries so I kind of got swept away.
+I do alot of those "hunt a killer" boxes, and this is pretty similar ... but with SQL. 
+
+Also, because I was taking handwritten notes amd had the schema diagram above the sql input area,
+I didnt do any joins? to be honest I thought this was going to be longer, 
+and kind of built up. starting with the basics and go to more advanced queries.
+Ultimately I used really simple queries to get the solution, 
+and i'm not sure that was the correct way to go about this assignment. 
+
+
+That being said, the screenshots are in order of my queries, 
+and my Notes follow along with the results of those queries when the results were useful to the "case".

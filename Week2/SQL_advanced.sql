@@ -29,6 +29,32 @@ USE coffeeshop_db;
 -- Use a window function for the rolling average.
 -- Sort by store_name, order_date.
 
+-- order_items.quantity, products.price, stores.store_id, orders.order_datetime
+WITH daily_revenue as (
+	SELECT 
+		orders.store_id,
+		DATE(orders.order_datetime) as order_date,
+		SUM(order_items.quantity * products.price) as revenue_day
+		from orders
+		join order_items on order_items.order_id = orders.order_id
+		join products on products.product_id = order_items.product_id
+		where orders.status = 'paid'
+		group by orders.store_id, DATE(orders.order_datetime)
+)
+select stores.name, 
+	daily_revenue.order_date,
+	daily_revenue.revenue_day,
+		AVG(daily_revenue.revenue_day) OVER (
+        partition by daily_revenue.store_id
+        order by daily_revenue.order_date
+        rows between 2 preceding and current row
+        ) as rolling_3day_avg
+from daily_revenue
+join stores on stores.store_id = daily_revenue.store_id
+order by stores.name, order_date;
+
+
+
 -- =========================================================
 -- Q3) Window function: Rank customers by lifetime spend (PAID only)
 -- =========================================================

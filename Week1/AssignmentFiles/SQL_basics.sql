@@ -31,10 +31,9 @@ select name, city, state from stores;
 
 -- Q7) From orders, show order_id, status, and a computed column total_items
 --     that counts how many items are in each order.
-select SUM(quantity) as total_items 
-from order_items
-group by order_id;
--- FINSH LATER 
+select orders.order_id, orders.status, sum(order_items.quantity) as total_items from orders 
+left join order_items on orders.order_id = order_items.order_id
+group by order_id; 
 
 -- Q8) Show orders placed on '2025-09-04' (any time that day).
 select * from orders
