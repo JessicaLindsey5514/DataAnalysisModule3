@@ -11,10 +11,10 @@ left join categories on categories.category_id = products.category_id;
 -- Q2) For each order item, show: order_id, order_datetime, store_name,
 --     product_name, quantity, line_total (= quantity * products.price).
 --     Sort by order_datetime, then order_id.
-select orders.order_id, orders.order_datetime, order_items.quantity, stores.name, products.name, (order_items.quantity * products.price) as line_total
+select orders.order_id, orders.order_datetime, order_items.quantity, stores.name as store_name, products.name as product_name, (order_items.quantity * products.price) as line_total
 from orders
-join order_items on orders.order_id = order_items.order_id
-join stores on orders.store_id = stores.store_id
+join order_items on order_items.order_id = orders.order_id
+join stores on stores.store_id = orders.store_id
 join products on products.product_id = order_items.product_id
 order by orders.order_datetime, orders.order_id;
 
@@ -53,7 +53,22 @@ where orders.order_id = null;
 -- Q5) For each store, list the top-selling product by units (PAID only).
 --     Return store_name, product_name, total_units.
 --     Hint: Use a window function (ROW_NUMBER PARTITION BY store) or a correlated subquery.
+with per_store as (
+select stores.name as store_name,
+products.name as product_name,
+sum(order_items.quantity) as total_units,
+	rank() over (partition by stores.name order by sum(order_items.quantity) desc) as product_rank_per_store 
+from stores
+join orders on orders.store_id = stores.store_id
+join order_items on order_items.order_id = orders.order_id
+join products on products.product_id = order_items.product_id
+where orders.status = 'paid'
+group by store_name, product_name)
+select store_name, product_name, total_units
+from per_store
+where product_rank_per_store = 1;
 
+-- several ties
 
 
 -- Q6) Inventory check: show rows where on_hand < 12 in any store.
@@ -76,10 +91,37 @@ where title = 'Manager';
 -- Q8) Using a subquery/CTE: list products whose total PAID revenue is above
 --     the average PAID product revenue. Return product_name, total_revenue.
 
+WITH cte_avgrev as (
+	select products.name as product_name, 
+	(order_items.quantity * products.price) as total_revenue
+	from products
+	join order_items on products.product_id = order_items.product_id
+	join orders on orders.order_id = order_items.order_id)
+select * from cte_avgrev
+where orders.status = 'paid'
+and total_revenue > avg(total_revenue);
+
+
+
 -- Q9) Churn-ish check: list customers with their last PAID order date.
 --     If they have no PAID orders, show NULL.
 --     Hint: Put the status filter in the LEFT JOIN's ON clause to preserve non-buyer rows.
 
 
+
 -- Q10) Product mix report (PAID only):
 --     For each store and category, show total units and total revenue (= SUM(quantity * products.price)).
+
+
+with store_units as (
+	select stores.name as store_name, categories.name as category_name, sum(order_items.quantity) as total_units, sum(order_items.quantity * products.price) as total_revenue
+	from order_items
+	join products on products.product_id = order_items.product_id
+	join categories on categories.category_id = products.category_id
+	join orders on orders.order_id = order_items.order_id
+	join stores on stores.store_id = orders.store_id
+	group by stores.name, categories.name)
+select store_name, category_name, total_units, total_revenue
+from store_units;
+
+-- 

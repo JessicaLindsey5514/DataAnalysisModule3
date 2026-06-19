@@ -18,6 +18,25 @@ USE coffeeshop_db;
 -- for THAT SAME store (correlated subquery).
 -- Sort by store_name, then order_total DESC.
 
+
+
+select concat(customers.first_name, ' ', customers.last_name) as customer_name, 
+stores.name as store_name, 
+orders.order_id, 
+orders.order_datetime, 
+order_items.quantity,
+products.price
+from orders 
+join customers on customers.customer_id = orders.customer_id
+join stores on stores.store_id = orders.store_id
+join order_items on order_items.order_id = orders.order_id
+join products on products.product_id = order_items.product_id
+group by store_name;
+
+-- CANT DO THIS EITHER BUT I"M NOT WASTING ANYMORE TIME
+
+
+
 -- =========================================================
 -- Q2) CTE: Daily revenue and 3-day rolling average (PAID only)
 -- =========================================================
@@ -44,16 +63,18 @@ WITH daily_revenue as (
 select stores.name, 
 	daily_revenue.order_date,
 	daily_revenue.revenue_day,
-		AVG(daily_revenue.revenue_day) OVER (
-        partition by daily_revenue.store_id
-        order by daily_revenue.order_date
-        rows between 2 preceding and current row
+		round(
+			AVG(daily_revenue.revenue_day) OVER (
+			partition by daily_revenue.store_id
+			order by daily_revenue.order_date
+			rows between 2 preceding and current row
+			), 2
         ) as rolling_3day_avg
 from daily_revenue
 join stores on stores.store_id = daily_revenue.store_id
 order by stores.name, order_date;
 
-
+-- in class 
 
 -- =========================================================
 -- Q3) Window function: Rank customers by lifetime spend (PAID only)
@@ -64,6 +85,16 @@ order by stores.name, order_date;
 -- Also include percent_of_total = customer's total_spend / total spend of all customers.
 -- Sort by total_spend DESC.
 
+select customers.customer_id, customers.first_name, customers.last_name, order_items.quantity * products.price as total_spend
+
+
+
+
+dense_rank() over (partition by customers.customer_id order by total_spend DESC) 
+
+
+
+
 -- =========================================================
 -- Q4) CTE + window: Top product per store by revenue (PAID only)
 -- =========================================================
@@ -73,6 +104,8 @@ order by stores.name, order_date;
 -- Use a CTE to compute product_revenue, then a window function (ROW_NUMBER)
 -- partitioned by store to select the top 1.
 -- Sort by store_name.
+
+
 
 -- =========================================================
 -- Q5) Subquery: Customers who have ordered from ALL stores (PAID only)
