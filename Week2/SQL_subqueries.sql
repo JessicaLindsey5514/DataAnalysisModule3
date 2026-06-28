@@ -65,15 +65,16 @@ from order_items;
 --     Return product_id, product_name, total_units_sold.
 
 with products_sold as (
-	select products.product_id, products.name, sum(order_items.quantity) as total_units_sold
-	from products
-	join order_items on order_items.product_id = products.product_id
-	group by products.product_id, products.name)
-select product_id, name, total_units_sold
-from products_sold
-group by product_id, name
-order by total_units_sold desc;
-
--- AVG  OF SUM OF TOTAL UNITS SOLD 
--- subquery in where clause???
--- another CTE ???
+    select products.product_id as product_id, products.name as product_name, sum(order_items.quantity) as total_units_sold
+    from products
+    join order_items on order_items.product_id = products.product_id
+    group by products.product_id, products.name
+),
+avg_sold as (
+	select avg(total_units_sold) as total_units_sold_avg
+    from products_sold
+)
+select product_id, product_name, total_units_sold, total_units_sold_avg
+from products_sold, avg_sold
+where total_units_sold > total_units_sold_avg
+order by product_name;

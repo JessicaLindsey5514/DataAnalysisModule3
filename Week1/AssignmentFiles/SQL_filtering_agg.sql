@@ -94,8 +94,6 @@ select (100 * sum(payment_method = 'app') / count(*)) as pct_app_paid_orders
 from orders
 where status = 'paid';
 
--- 23% but how do i make sql give me the answer?
-
 -- Q12) Busiest hour: for PAID orders, show (hour_of_day, orders_count) sorted desc.
 
 select HOUR(order_datetime) as hour_of_day, count(order_id) as orders_count

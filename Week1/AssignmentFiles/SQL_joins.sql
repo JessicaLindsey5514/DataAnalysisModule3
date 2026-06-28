@@ -106,6 +106,11 @@ and total_revenue > avg(total_revenue);
 -- Q9) Churn-ish check: list customers with their last PAID order date.
 --     If they have no PAID orders, show NULL.
 --     Hint: Put the status filter in the LEFT JOIN's ON clause to preserve non-buyer rows.
+SELECT concat(customers.first_name, ' ',customers.last_name) as customer_name, MAX(orders.order_datetime)
+FROM customers
+JOIN orders on orders.customer_id = customers.customer_id
+WHERE orders.status = 'paid'
+GROUP BY customer_name;
 
 
 
